@@ -138,4 +138,4 @@ This project is licensed under the MIT License. 📝
 
 ## 📧 Contact
 
-For any inquiries or support, reach out to [your_email@example.com](mailto:your_email@example.com).
+For any inquiries or support, reach out to [your_email@example.com](chathupachamika765@gmail.com).
