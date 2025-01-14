@@ -14,7 +14,7 @@ A full-stack authentication system built with React + Vite for frontend and Node
 ## 📦 Installation
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/jwt-auth.git
+   git clone https://github.com/Chathupachamika/JWT_integrate_NodeJS.git
    cd jwt-auth
    ```
 
