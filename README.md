@@ -7,28 +7,6 @@ A full-stack authentication system built with React + Vite for frontend and Node
 ![MongoDB](https://img.shields.io/badge/mongodb-v5.0+-green)
 
 ---
-## 📋 Table of Contents
-- [Features](#-features)
-- [Demo](#-demo)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Tech Stack](#%EF%B8%8F-tech-stack)
-- [Project Structure](#-project-structure)
-- [Development](#-development)
-- [Environment Variables](#%EF%B8%8F-environment-variables)
-- [API Documentation](#-api-documentation)
-- [Security Features](#-security-features)
-- [Frontend Features](#-frontend-features)
-- [Customization](#-customization)
-- [Testing](#-testing)
-- [Deployment](#-deployment)
-- [Contributing](#-contributing)
-- [Code of Conduct](#-code-of-conduct)
-- [License](#-license)
-- [Author](#-author)
-- [Acknowledgments](#-acknowledgments)
-
----
 ## 🌟 Features
 - 🔒 **Secure Authentication**: JWT-based authentication system
 - 💻 **Modern Stack**: React, Vite, Node.js, Express, and MongoDB
