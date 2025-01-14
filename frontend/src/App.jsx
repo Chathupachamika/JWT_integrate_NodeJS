@@ -1,4 +1,3 @@
-// src/App.jsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material';
 import Login from './components/LoginPage';
@@ -23,21 +22,21 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          <Route 
-            path="/login" 
+          <Route
+            path="/login"
             element={
-              !isAuthenticated ? 
-                <Login setIsAuthenticated={setIsAuthenticated} /> : 
+              !isAuthenticated ?
+                <Login setIsAuthenticated={setIsAuthenticated} /> :
                 <Navigate to="/home" />
-            } 
+            }
           />
-          <Route 
-            path="/home" 
+          <Route
+            path="/home"
             element={
-              isAuthenticated ? 
-                <Home setIsAuthenticated={setIsAuthenticated} /> : 
+              isAuthenticated ?
+                <Home setIsAuthenticated={setIsAuthenticated} /> :
                 <Navigate to="/login" />
-            } 
+            }
           />
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
