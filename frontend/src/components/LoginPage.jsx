@@ -1,4 +1,3 @@
-// src/components/Login.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -56,7 +55,7 @@ const Login = ({ setIsAuthenticated }) => {
 
     try {
       const response = await axios.post('http://localhost:3003/api/user/login', formData);
-      
+
       const { token } = response.data;
       if (token) {
         localStorage.setItem('token', token);
@@ -66,7 +65,7 @@ const Login = ({ setIsAuthenticated }) => {
     } catch (err) {
       console.error('Login error:', err);
       setError(
-        err.response?.data?.error || 
+        err.response?.data?.error ||
         'An error occurred during login. Please try again.'
       );
     } finally {
