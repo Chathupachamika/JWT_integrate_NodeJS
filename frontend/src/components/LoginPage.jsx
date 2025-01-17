@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import axios from 'axios';
 import {
   Container,
@@ -8,6 +8,8 @@ import {
   Button,
   Typography,
   Alert,
+  Link,
+  CircularProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
@@ -27,9 +29,18 @@ const StyledBox = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   backgroundColor: 'white',
   borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[3],
+  boxShadow: '0 3px 10px rgba(0, 0, 0, 0.2)',
   width: '100%',
   maxWidth: '400px',
+  transition: 'transform 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+  },
+}));
+
+const StyledForm = styled('form')(({ theme }) => ({
+  width: '100%',
+  marginTop: theme.spacing(1),
 }));
 
 const Login = ({ setIsAuthenticated }) => {
@@ -42,14 +53,22 @@ const Login = ({ setIsAuthenticated }) => {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
+    setError(''); // Clear error when user starts typing
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value.trim(),
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate inputs
+    if (!formData.username || !formData.password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -64,27 +83,48 @@ const Login = ({ setIsAuthenticated }) => {
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError(
-        err.response?.data?.error ||
-        'An error occurred during login. Please try again.'
-      );
+      if (err.response?.status === 401) {
+        setError('Invalid username or password');
+      } else if (err.response?.status === 404) {
+        setError('Server not found. Please try again later.');
+      } else {
+        setError('An error occurred during login. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <StyledContainer>
+    <StyledContainer maxWidth="sm">
       <StyledBox>
-        <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-          Sign In
+        <Typography 
+          component="h1" 
+          variant="h5" 
+          sx={{ 
+            mb: 3,
+            fontWeight: 600,
+            color: 'primary.main'
+          }}
+        >
+          Welcome Back
         </Typography>
         {error && (
-          <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 2, 
+              width: '100%',
+              '& .MuiAlert-message': {
+                width: '100%',
+                textAlign: 'center'
+              }
+            }}
+          >
             {error}
           </Alert>
         )}
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+        <StyledForm onSubmit={handleSubmit}>
           <TextField
             margin="normal"
             required
@@ -97,6 +137,7 @@ const Login = ({ setIsAuthenticated }) => {
             value={formData.username}
             onChange={handleChange}
             disabled={loading}
+            sx={{ mb: 2 }}
           />
           <TextField
             margin="normal"
@@ -110,17 +151,50 @@ const Login = ({ setIsAuthenticated }) => {
             value={formData.password}
             onChange={handleChange}
             disabled={loading}
+            sx={{ mb: 3 }}
           />
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
             disabled={loading}
+            sx={{
+              mt: 2,
+              mb: 3,
+              py: 1.5,
+              position: 'relative',
+              '&:hover': {
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+              },
+            }}
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              'Sign In'
+            )}
           </Button>
-        </Box>
+          <Box sx={{ 
+            textAlign: 'center', 
+            mt: 2,
+            '& a': {
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }
+          }}>
+            <Link 
+              component={RouterLink} 
+              to="/register" 
+              variant="body2" 
+              color="primary"
+            >
+              Don't have an account? Sign up
+            </Link>
+          </Box>
+        </StyledForm>
       </StyledBox>
     </StyledContainer>
   );

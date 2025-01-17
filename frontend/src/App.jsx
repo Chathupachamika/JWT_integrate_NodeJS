@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material';
 import Login from './components/LoginPage';
+import Register from './components/Register';
 import Home from './components/HomePage';
 import { useState } from 'react';
 
@@ -27,6 +28,14 @@ function App() {
             element={
               !isAuthenticated ?
                 <Login setIsAuthenticated={setIsAuthenticated} /> :
+                <Navigate to="/home" />
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              !isAuthenticated ?
+                <Register setIsAuthenticated={setIsAuthenticated} /> :
                 <Navigate to="/home" />
             }
           />
