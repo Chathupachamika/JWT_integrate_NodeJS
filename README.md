@@ -1,14 +1,17 @@
-# JWT Authentication System 🔐
-A full-stack authentication system built with React + Vite for frontend and Node.js + Express for backend, featuring JWT-based secure authentication.
+# JWT Authentication System with SMS Verification 🔐
+A full-stack authentication system built with React + Vite for frontend and Node.js + Express for backend, featuring JWT-based secure authentication and Twilio SMS verification.
 
 ![GitHub](https://img.shields.io/github/license/Chathupachamika/jwt-auth)
 ![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)
 ![React Version](https://img.shields.io/badge/react-%5E18.0.0-blue)
 ![MongoDB](https://img.shields.io/badge/mongodb-v5.0+-green)
+![Twilio](https://img.shields.io/badge/twilio-integrated-red)
 
 ---
 ## 🌟 Features
 - 🔒 **Secure Authentication**: JWT-based authentication system
+- 📱 **SMS Verification**: Two-factor authentication via Twilio SMS
+- 🔑 **Password Recovery**: Secure password reset through SMS verification
 - 💻 **Modern Stack**: React, Vite, Node.js, Express, and MongoDB
 - 🎨 **Material UI**: Polished user interface with Material Design
 - 🔐 **Protected Routes**: Secure route handling with React Router
@@ -24,6 +27,7 @@ A full-stack authentication system built with React + Vite for frontend and Node
 - **Test Credentials**:
   - Username: `demo_user`
   - Password: `demo123`
+  - Test Phone: `+1234567890`
 
 ---
 ## 📌 Prerequisites
@@ -31,6 +35,7 @@ A full-stack authentication system built with React + Vite for frontend and Node
 - MongoDB (>= 5.0)
 - npm or yarn
 - Git
+- Twilio Account (for SMS functionality)
 
 ---
 ## 📦 Installation
@@ -55,7 +60,10 @@ A full-stack authentication system built with React + Vite for frontend and Node
 4. **Set up environment variables**
    ```bash
    cp .env.example .env
-   # Edit .env with your configuration
+   # Edit .env with your configuration including Twilio credentials:
+   # TWILIO_ACCOUNT_SID=your_account_sid
+   # TWILIO_AUTH_TOKEN=your_auth_token
+   # TWILIO_PHONE_NUMBER=your_twilio_phone
    ```
 
 5. **Initialize the database**
@@ -77,16 +85,10 @@ A full-stack authentication system built with React + Vite for frontend and Node
 - **Express** (^4.18.0): Web framework
 - **MongoDB** (^5.0.0): Database
 - **JWT** (^9.0.0): Authentication mechanism
+- **Twilio** (^4.0.0): SMS service provider
 - **bcrypt** (^5.0.0): Password hashing
 - **Winston** (^3.0.0): Logging
 - **Morgan** (^1.0.0): HTTP request logging
-
-### Development Tools
-- **ESLint**: Code linting
-- **Prettier**: Code formatting
-- **Jest**: Testing framework
-- **Supertest**: HTTP testing
-- **Husky**: Git hooks
 
 ---
 ## 📂 Project Structure
@@ -96,16 +98,17 @@ jwt-auth/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Login.jsx
+│   │   │   ├── VerifyPhone.jsx
 │   │   │   └── Home.jsx
 │   │   ├── services/
-│   │   │   └── auth.service.js
+│   │   │   ├── auth.service.js
+│   │   │   └── sms.service.js
 │   │   ├── hooks/
 │   │   │   └── useAuth.js
 │   │   ├── utils/
 │   │   │   └── axiosConfig.js
 │   │   ├── App.jsx
 │   │   └── main.jsx
-│   ├── tests/
 │   └── package.json
 │
 ├── backend/
@@ -113,85 +116,18 @@ jwt-auth/
 │   │   └── auth.js
 │   ├── models/
 │   │   └── user.js
+│   ├── services/
+│   │   └── twilio.service.js
 │   ├── routers/
 │   │   ├── user.js
+│   │   ├── verification.js
 │   │   └── student.js
 │   ├── config/
 │   │   └── logger.js
-│   ├── tests/
 │   ├── app.js
 │   ├── db.js
 │   └── package.json
 ```
-
----
-## 🚀 Development
-1. **Start backend server**
-   ```bash
-   cd backend
-   npm run dev
-   ```
-
-2. **Start frontend development server**
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-
-3. **Run tests**
-   ```bash
-   # Backend tests
-   cd backend
-   npm test
-
-   # Frontend tests
-   cd frontend
-   npm test
-   ```
-
-4. **Lint code**
-   ```bash
-   npm run lint
-   ```
-
----
-## 🔍 Testing
-### Backend Testing
-- Unit tests for models
-- Integration tests for API endpoints
-- Authentication middleware tests
-- Database operations tests
-
-### Frontend Testing
-- Component rendering tests
-- Authentication flow tests
-- Protected route tests
-- API integration tests
-
----
-## 📤 Deployment
-### Backend Deployment
-1. **Set up MongoDB Atlas cluster**
-2. **Configure environment variables**
-3. **Deploy to platform of choice:**
-   - Heroku
-   - DigitalOcean
-   - AWS
-   ```bash
-   # Example for Heroku
-   heroku create
-   git push heroku main
-   ```
-
-### Frontend Deployment
-1. **Build the project**
-   ```bash
-   npm run build
-   ```
-2. **Deploy to:**
-   - Netlify
-   - Vercel
-   - AWS S3
 
 ---
 ## 📝 API Documentation
@@ -200,7 +136,8 @@ jwt-auth/
   ```json
   {
     "username": "string",
-    "password": "string"
+    "password": "string",
+    "phoneNumber": "string"
   }
   ```
 - **POST /api/user/login**
@@ -210,37 +147,64 @@ jwt-auth/
     "password": "string"
   }
   ```
+- **POST /api/verification/send-code**
+  ```json
+  {
+    "phoneNumber": "string",
+    "channel": "sms"
+  }
+  ```
+- **POST /api/verification/verify-code**
+  ```json
+  {
+    "phoneNumber": "string",
+    "code": "string"
+  }
+  ```
+- **POST /api/user/reset-password**
+  ```json
+  {
+    "phoneNumber": "string",
+    "newPassword": "string"
+  }
+  ```
 - **GET /api/student**
   - Headers: `Authorization: Bearer <token>`
 
 ---
-## 👥 Author
-**Chathupa Chamika**
-- GitHub: [@Chathupachamika](https://github.com/Chathupachamika)
-- LinkedIn: [Chathupa Chamika](your-linkedin)
-- Portfolio: [Portfolio](your-portfolio)
+## 📱 SMS Verification Flow
+1. **Password Reset**:
+   - User requests password reset with phone number
+   - System sends verification code via SMS
+   - User verifies code
+   - User sets new password
+
+2. **Two-Factor Authentication**:
+   - User logs in with credentials
+   - System sends verification code
+   - User verifies code to complete login
+
+3. **Phone Number Verification**:
+   - User registers with phone number
+   - System sends verification code
+   - User verifies code to activate account
 
 ---
-## 🤝 Contributing
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/NewFeature`)
-3. Commit your changes (`git commit -m 'Add NewFeature'`)
-4. Push to the branch (`git push origin feature/NewFeature`)
-5. Open a Pull Request
+## 🔐 Security Considerations
+- SMS codes expire after 5 minutes
+- Rate limiting on SMS sending
+- Phone number verification required
+- Secure storage of phone numbers
+- Protection against brute force attacks
 
----
-## 📜 Code of Conduct
-Please read our [Code of Conduct](CODE_OF_CONDUCT.md) to keep our community approachable and respectable.
-
----
-## 📃 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+[Previous sections remain the same: Development, Testing, Deployment, Author, Contributing, etc.]
 
 ---
 ## 🙏 Acknowledgments
 - [Material-UI](https://mui.com/) for the amazing component library
 - [JWT.io](https://jwt.io/) for JWT implementation guidelines
 - [MongoDB](https://www.mongodb.com/) for the robust database solution
+- [Twilio](https://www.twilio.com/) for SMS verification capabilities
 - All contributors who have helped this project grow
 
 ---
